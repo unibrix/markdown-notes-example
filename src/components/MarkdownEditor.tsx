@@ -29,7 +29,7 @@ export const MarkdownEditor = ({
           value={content}
           onChange={(e) => onContentChange(e.target.value)}
           placeholder="Start writing in markdown..."
-          className="h-full w-full resize-none border-none bg-transparent p-6 font-mono text-base leading-relaxed focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="markdown-editor-content h-full w-full resize-none border-none bg-transparent p-6 font-mono text-base leading-relaxed focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
     </section>

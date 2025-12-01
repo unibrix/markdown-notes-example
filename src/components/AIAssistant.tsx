@@ -34,15 +34,22 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
       const text = selection?.toString().trim();
       
       if (text && text.length > 0) {
+        // Check if selection is within the editor
+        const editorElement = document.querySelector('.markdown-editor-content');
         const range = selection?.getRangeAt(0);
-        const rect = range?.getBoundingClientRect();
         
-        if (rect) {
-          setToolbarPosition({
-            top: rect.top + window.scrollY - 50,
-            left: rect.left + window.scrollX + rect.width / 2
-          });
-          setShowToolbar(true);
+        if (range && editorElement?.contains(range.commonAncestorContainer)) {
+          const rect = range.getBoundingClientRect();
+          
+          if (rect) {
+            setToolbarPosition({
+              top: rect.top + window.scrollY - 50,
+              left: rect.left + window.scrollX + rect.width / 2
+            });
+            setShowToolbar(true);
+          }
+        } else {
+          setShowToolbar(false);
         }
       } else {
         setShowToolbar(false);
@@ -51,10 +58,12 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
 
     document.addEventListener('mouseup', handleSelection);
     document.addEventListener('keyup', handleSelection);
+    document.addEventListener('selectionchange', handleSelection);
 
     return () => {
       document.removeEventListener('mouseup', handleSelection);
       document.removeEventListener('keyup', handleSelection);
+      document.removeEventListener('selectionchange', handleSelection);
     };
   }, []);
 
@@ -122,7 +131,7 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
       {showToolbar && selectedText && (
         <div
           ref={toolbarRef}
-          className="fixed z-50 flex gap-1 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] p-1.5 rounded-lg shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
+          className="fixed z-50 flex gap-1 bg-primary p-1.5 rounded-lg shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
           style={{
             top: `${toolbarPosition.top}px`,
             left: `${toolbarPosition.left}px`,
@@ -163,9 +172,9 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
-            className="gap-2 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] text-white border-none hover:opacity-90"
+            className="gap-2"
           >
             <Sparkles className="h-4 w-4" />
             AI Assistant
@@ -194,7 +203,7 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
               <Button
                 onClick={() => handleAIAction('generate')}
                 disabled={isLoading || !prompt}
-                className="w-full mt-3 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] text-white hover:opacity-90"
+                className="w-full mt-3"
                 size="default"
               >
                 {isLoading ? (
