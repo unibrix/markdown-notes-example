@@ -37,7 +37,7 @@ export const NotesList = ({
   );
 
   return (
-    <aside className="w-80 border-r border-sidebar-border bg-sidebar flex flex-col h-screen">
+    <aside className="w-full border-r border-sidebar-border bg-sidebar flex flex-col h-screen">
       <header className="p-4 border-b border-sidebar-border">
         <h1 className="text-xl font-display font-bold text-sidebar-foreground mb-4">
           Notes
