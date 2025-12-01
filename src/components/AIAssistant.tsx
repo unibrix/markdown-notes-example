@@ -23,9 +23,10 @@ interface AIAssistantProps {
   onInsertText: (text: string) => void;
   selectedText: string;
   onSelectionAction: (action: 'expand' | 'summarize' | 'improve') => void;
+  resetKey?: string; // Used to reset toolbar state when note changes
 }
 
-export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: AIAssistantProps) => {
+export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction, resetKey }: AIAssistantProps) => {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -33,6 +34,12 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
   const toolbarRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Reset toolbar when note changes
+  useEffect(() => {
+    setShowToolbar(false);
+    window.getSelection()?.removeAllRanges();
+  }, [resetKey]);
 
   useEffect(() => {
     const handleSelection = () => {

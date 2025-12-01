@@ -226,6 +226,23 @@ const Index = () => {
     }
   };
 
+  const exportMarkdown = () => {
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${title || 'Untitled'}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: 'Success',
+      description: 'Note exported as .md file',
+    });
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-background">
@@ -238,11 +255,12 @@ const Index = () => {
     return (
       <div className="flex flex-col h-screen overflow-hidden">
         <div className="flex items-center justify-between p-2 border-b bg-sidebar-background">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
             <AIAssistant
               onInsertText={insertText}
               selectedText={getSelectedText()}
               onSelectionAction={() => {}}
+              resetKey={selectedNoteId || 'no-note'}
             />
           </div>
           <Button
@@ -290,6 +308,7 @@ const Index = () => {
               content={content}
               onTitleChange={setTitle}
               onContentChange={setContent}
+              onExport={exportMarkdown}
             />
           </TabsContent>
           
@@ -322,6 +341,7 @@ const Index = () => {
             content={content}
             onTitleChange={setTitle}
             onContentChange={setContent}
+            onExport={exportMarkdown}
           />
         </ResizablePanel>
         
@@ -337,6 +357,7 @@ const Index = () => {
           onInsertText={insertText}
           selectedText={getSelectedText()}
           onSelectionAction={() => {}}
+          resetKey={selectedNoteId || 'no-note'}
         />
         <Button
           variant="default"
