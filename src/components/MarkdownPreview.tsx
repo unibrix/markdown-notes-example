@@ -1,6 +1,7 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 
 interface MarkdownPreviewProps {
   content: string;
@@ -16,8 +17,8 @@ export const MarkdownPreview = ({ content, title }: MarkdownPreviewProps) => {
         </h2>
       </header>
       <ScrollArea className="flex-1">
-        <article className="markdown-preview-content prose prose-lg max-w-none p-6 prose-headings:font-display prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-code:text-foreground prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-pre:bg-muted prose-th:text-foreground prose-td:text-foreground">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        <article className="markdown-preview-content prose prose-lg max-w-none p-6 prose-headings:font-display prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-code:text-foreground prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-pre:bg-muted prose-th:text-foreground prose-td:text-foreground prose-ol:list-decimal prose-ul:list-disc">
+          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
             {content || '*Start typing to see preview...*'}
           </ReactMarkdown>
         </article>
