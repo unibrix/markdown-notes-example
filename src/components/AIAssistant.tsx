@@ -9,6 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Sparkles, Wand2, FileText, Zap, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -126,7 +132,7 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
   };
 
   return (
-    <>
+    <TooltipProvider>
       {/* Floating Toolbar for Selection */}
       {showToolbar && selectedText && (
         <div
@@ -138,48 +144,78 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
             transform: 'translateX(-50%)',
           }}
         >
-          <Button
-            onClick={() => handleToolbarAction('expand')}
-            disabled={isLoading}
-            variant="ghost"
-            size="sm"
-            className="h-8 text-white hover:bg-white/20"
-          >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
-          </Button>
-          <Button
-            onClick={() => handleToolbarAction('summarize')}
-            disabled={isLoading}
-            variant="ghost"
-            size="sm"
-            className="h-8 text-white hover:bg-white/20"
-          >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-          </Button>
-          <Button
-            onClick={() => handleToolbarAction('improve')}
-            disabled={isLoading}
-            variant="ghost"
-            size="sm"
-            className="h-8 text-white hover:bg-white/20"
-          >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => handleToolbarAction('expand')}
+                disabled={isLoading}
+                variant="ghost"
+                size="sm"
+                className="h-8 text-white hover:bg-white/20"
+              >
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Expand text</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => handleToolbarAction('summarize')}
+                disabled={isLoading}
+                variant="ghost"
+                size="sm"
+                className="h-8 text-white hover:bg-white/20"
+              >
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Summarize text</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => handleToolbarAction('improve')}
+                disabled={isLoading}
+                variant="ghost"
+                size="sm"
+                className="h-8 text-white hover:bg-white/20"
+              >
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Improve text</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
 
       {/* Generate Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="default"
-            size="sm"
-            className="gap-2"
-          >
-            <Sparkles className="h-4 w-4" />
-            AI Assistant
-          </Button>
-        </DialogTrigger>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              <Button
+                variant="default"
+                size="sm"
+                className="gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                AI Assistant
+              </Button>
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Generate content with AI</p>
+          </TooltipContent>
+        </Tooltip>
         <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
             <DialogTitle className="font-display text-2xl">AI Assistant</DialogTitle>
@@ -222,6 +258,6 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </TooltipProvider>
   );
 };
