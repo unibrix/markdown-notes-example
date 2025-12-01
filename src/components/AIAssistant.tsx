@@ -133,6 +133,14 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: A
 
   return (
     <TooltipProvider>
+      {/* AI Working Indicator */}
+      {isLoading && (
+        <div className="fixed top-20 right-4 z-50 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-top-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="text-sm font-medium">AI is working...</span>
+        </div>
+      )}
+
       {/* Floating Toolbar for Selection */}
       {showToolbar && selectedText && (
         <div
