@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -9,20 +9,60 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Sparkles, Wand2, FileText, Zap } from 'lucide-react';
+import { Sparkles, Wand2, FileText, Zap, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface AIAssistantProps {
   onInsertText: (text: string) => void;
   selectedText: string;
+  onSelectionAction: (action: 'expand' | 'summarize' | 'improve') => void;
 }
 
-export const AIAssistant = ({ onInsertText, selectedText }: AIAssistantProps) => {
+export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction }: AIAssistantProps) => {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showToolbar, setShowToolbar] = useState(false);
+  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const handleSelection = () => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+      
+      if (text && text.length > 0) {
+        const range = selection?.getRangeAt(0);
+        const rect = range?.getBoundingClientRect();
+        
+        if (rect) {
+          setToolbarPosition({
+            top: rect.top + window.scrollY - 50,
+            left: rect.left + window.scrollX + rect.width / 2
+          });
+          setShowToolbar(true);
+        }
+      } else {
+        setShowToolbar(false);
+      }
+    };
+
+    document.addEventListener('mouseup', handleSelection);
+    document.addEventListener('keyup', handleSelection);
+
+    return () => {
+      document.removeEventListener('mouseup', handleSelection);
+      document.removeEventListener('keyup', handleSelection);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedText) {
+      setShowToolbar(false);
+    }
+  }, [selectedText]);
 
   const handleAIAction = async (action: 'generate' | 'expand' | 'summarize' | 'improve') => {
     setIsLoading(true);
@@ -38,6 +78,7 @@ export const AIAssistant = ({ onInsertText, selectedText }: AIAssistantProps) =>
             : 'Please select some text first',
           variant: 'destructive',
         });
+        setIsLoading(false);
         return;
       }
 
@@ -51,6 +92,7 @@ export const AIAssistant = ({ onInsertText, selectedText }: AIAssistantProps) =>
         onInsertText(data.result);
         setPrompt('');
         setOpen(false);
+        setShowToolbar(false);
         toast({
           title: 'Success',
           description: 'AI assistance applied',
@@ -68,97 +110,109 @@ export const AIAssistant = ({ onInsertText, selectedText }: AIAssistantProps) =>
     }
   };
 
+  const handleToolbarAction = (action: 'expand' | 'summarize' | 'improve') => {
+    setShowToolbar(false);
+    onSelectionAction(action);
+    handleAIAction(action);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] text-white border-none hover:opacity-90"
+    <>
+      {/* Floating Toolbar for Selection */}
+      {showToolbar && selectedText && (
+        <div
+          ref={toolbarRef}
+          className="fixed z-50 flex gap-1 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] p-1.5 rounded-lg shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
+          style={{
+            top: `${toolbarPosition.top}px`,
+            left: `${toolbarPosition.left}px`,
+            transform: 'translateX(-50%)',
+          }}
         >
-          <Sparkles className="h-4 w-4" />
-          AI Assistant
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px]">
-        <DialogHeader>
-          <DialogTitle className="font-display text-2xl">AI Assistant</DialogTitle>
-          <DialogDescription>
-            Use AI to generate, expand, or improve your content
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4 py-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">
-              Generate New Content
-            </label>
-            <Textarea
-              placeholder="Describe what you want to write about..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <Button
-              onClick={() => handleAIAction('generate')}
-              disabled={isLoading || !prompt}
-              className="w-full mt-2"
-              size="sm"
-            >
-              <Wand2 className="h-4 w-4 mr-2" />
-              Generate
-            </Button>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or work with selected text
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-            <Button
-              onClick={() => handleAIAction('expand')}
-              disabled={isLoading || !selectedText}
-              variant="secondary"
-              size="sm"
-            >
-              <FileText className="h-4 w-4 mr-1" />
-              Expand
-            </Button>
-            <Button
-              onClick={() => handleAIAction('summarize')}
-              disabled={isLoading || !selectedText}
-              variant="secondary"
-              size="sm"
-            >
-              <Zap className="h-4 w-4 mr-1" />
-              Summarize
-            </Button>
-            <Button
-              onClick={() => handleAIAction('improve')}
-              disabled={isLoading || !selectedText}
-              variant="secondary"
-              size="sm"
-            >
-              <Sparkles className="h-4 w-4 mr-1" />
-              Improve
-            </Button>
-          </div>
-
-          {selectedText && (
-            <div className="p-3 bg-muted rounded-md">
-              <p className="text-xs text-muted-foreground mb-1">Selected text:</p>
-              <p className="text-sm line-clamp-3">{selectedText}</p>
-            </div>
-          )}
+          <Button
+            onClick={() => handleToolbarAction('expand')}
+            disabled={isLoading}
+            variant="ghost"
+            size="sm"
+            className="h-8 text-white hover:bg-white/20"
+          >
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+          </Button>
+          <Button
+            onClick={() => handleToolbarAction('summarize')}
+            disabled={isLoading}
+            variant="ghost"
+            size="sm"
+            className="h-8 text-white hover:bg-white/20"
+          >
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+          </Button>
+          <Button
+            onClick={() => handleToolbarAction('improve')}
+            disabled={isLoading}
+            variant="ghost"
+            size="sm"
+            className="h-8 text-white hover:bg-white/20"
+          >
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+          </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      )}
+
+      {/* Generate Dialog */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] text-white border-none hover:opacity-90"
+          >
+            <Sparkles className="h-4 w-4" />
+            AI Assistant
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl">AI Assistant</DialogTitle>
+            <DialogDescription>
+              Generate new content with AI
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Describe what you want to write about
+              </label>
+              <Textarea
+                placeholder="e.g., Write a blog post about productivity tips..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="min-h-[120px]"
+                disabled={isLoading}
+              />
+              <Button
+                onClick={() => handleAIAction('generate')}
+                disabled={isLoading || !prompt}
+                className="w-full mt-3 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] text-white hover:opacity-90"
+                size="default"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    Generate
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

@@ -252,13 +252,15 @@ const Index = () => {
         <AIAssistant
           onInsertText={insertText}
           selectedText={getSelectedText()}
+          onSelectionAction={() => {}}
         />
         <Button
           variant="outline"
           size="sm"
           onClick={handleSignOut}
+          className="gap-2 bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] text-white border-none hover:opacity-90"
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <LogOut className="h-4 w-4" />
           Sign Out
         </Button>
       </div>
