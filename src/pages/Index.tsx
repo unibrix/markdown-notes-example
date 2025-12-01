@@ -5,9 +5,12 @@ import { MarkdownEditor } from '@/components/MarkdownEditor';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { AIAssistant } from '@/components/AIAssistant';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Loader2 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { LogOut, Loader2, FileText, Edit, Eye } from 'lucide-react';
 import { Session, User } from '@supabase/supabase-js';
 
 interface Note {
@@ -22,6 +25,7 @@ interface Note {
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -30,6 +34,7 @@ const Index = () => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [mobileTab, setMobileTab] = useState('notes');
 
   // Auth state management
   useEffect(() => {
@@ -229,24 +234,103 @@ const Index = () => {
     );
   }
 
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex items-center justify-between p-2 border-b bg-sidebar-background">
+          <div className="flex items-center gap-2">
+            <AIAssistant
+              onInsertText={insertText}
+              selectedText={getSelectedText()}
+              onSelectionAction={() => {}}
+            />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <Tabs value={mobileTab} onValueChange={setMobileTab} className="flex-1 flex flex-col">
+          <TabsList className="w-full grid grid-cols-3 rounded-none">
+            <TabsTrigger value="notes" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Notes
+            </TabsTrigger>
+            <TabsTrigger value="editor" className="gap-2">
+              <Edit className="h-4 w-4" />
+              Edit
+            </TabsTrigger>
+            <TabsTrigger value="preview" className="gap-2">
+              <Eye className="h-4 w-4" />
+              Preview
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="notes" className="flex-1 m-0 overflow-hidden">
+            <NotesList
+              notes={notes}
+              selectedNoteId={selectedNoteId}
+              onSelectNote={(id) => {
+                selectNote(id);
+                setMobileTab('editor');
+              }}
+              onCreateNote={createNote}
+              onDeleteNote={deleteNote}
+            />
+          </TabsContent>
+          
+          <TabsContent value="editor" className="flex-1 m-0 overflow-hidden">
+            <MarkdownEditor
+              title={title}
+              content={content}
+              onTitleChange={setTitle}
+              onContentChange={setContent}
+            />
+          </TabsContent>
+          
+          <TabsContent value="preview" className="flex-1 m-0 overflow-hidden">
+            <MarkdownPreview content={content} title={title} />
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen overflow-hidden">
-      <NotesList
-        notes={notes}
-        selectedNoteId={selectedNoteId}
-        onSelectNote={selectNote}
-        onCreateNote={createNote}
-        onDeleteNote={deleteNote}
-      />
-      
-      <MarkdownEditor
-        title={title}
-        content={content}
-        onTitleChange={setTitle}
-        onContentChange={setContent}
-      />
-      
-      <MarkdownPreview content={content} title={title} />
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
+          <NotesList
+            notes={notes}
+            selectedNoteId={selectedNoteId}
+            onSelectNote={selectNote}
+            onCreateNote={createNote}
+            onDeleteNote={deleteNote}
+          />
+        </ResizablePanel>
+        
+        <ResizableHandle withHandle />
+        
+        <ResizablePanel defaultSize={40} minSize={30}>
+          <MarkdownEditor
+            title={title}
+            content={content}
+            onTitleChange={setTitle}
+            onContentChange={setContent}
+          />
+        </ResizablePanel>
+        
+        <ResizableHandle withHandle />
+        
+        <ResizablePanel defaultSize={40} minSize={30}>
+          <MarkdownPreview content={content} title={title} />
+        </ResizablePanel>
+      </ResizablePanelGroup>
       
       <div className="absolute top-4 right-4 flex items-center gap-2">
         <AIAssistant
