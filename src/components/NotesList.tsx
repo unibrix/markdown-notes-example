@@ -73,7 +73,7 @@ export const NotesList = ({
           ) : (
             <div className="space-y-1">
               {filteredNotes.map((note) => (
-                <button
+                <div
                   key={note.id}
                   onClick={() => onSelectNote(note.id)}
                   className={cn(
@@ -107,7 +107,7 @@ export const NotesList = ({
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}

@@ -47,20 +47,21 @@ export const AIAssistant = ({ onInsertText, selectedText, onSelectionAction, res
       const text = selection?.toString().trim();
       
       if (text && text.length > 0) {
-        // Check if selection is within the preview area
         const previewElement = document.querySelector('.markdown-preview-content');
         const range = selection?.getRangeAt(0);
         
         if (range && previewElement?.contains(range.commonAncestorContainer)) {
-          const rect = range.getBoundingClientRect();
-          
-          if (rect && rect.width > 0 && rect.height > 0) {
-            setToolbarPosition({
-              top: rect.top + window.scrollY - 50,
-              left: rect.left + window.scrollX + rect.width / 2
-            });
-            setShowToolbar(true);
-          }
+          requestAnimationFrame(() => {
+            const rect = range.getBoundingClientRect();
+
+            if (rect.width > 0 && rect.height > 0) {
+              setToolbarPosition({
+                top: rect.top + window.scrollY - 50,
+                left: rect.left + window.scrollX + rect.width / 2,
+              });
+              setShowToolbar(true);
+            }
+          });
         } else {
           setShowToolbar(false);
         }
