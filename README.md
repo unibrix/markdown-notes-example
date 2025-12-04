@@ -7,7 +7,6 @@ Write in Markdown, preview instantly, and let AI help you refine your ideas — 
 
 ## 🚀 Currently hosted at:
 ### https://inklify.netlify.app/
-### https://inklify.lovable.app/
 
 ---
 
