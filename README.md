@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# Inklify – Your AI‑Powered Markdown Notebook
 
-## Project info
+Inklify helps you turn quick thoughts into clear, beautiful notes.  
+Write in Markdown, preview instantly, and let AI help you refine your ideas — all in one clean, responsive workspace.
 
-**URL**: https://lovable.dev/projects/fb4fe6f6-214b-4fed-95d8-9309c23239a5
+---
 
-## How can I edit this code?
+## ✨ What You Can Do with Inklify
 
-There are several ways of editing your application.
+### **📝 Write Markdown with Ease**
+A simple editor that supports headings, lists, tables, code blocks, and more.  
+Your note appears in a live preview so you always see the final look.
 
-**Use Lovable**
+<img alt="Inklify main page" src="./readme/assets/Screenshot%202025-12-04%20at%2013.49.14.png">
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fb4fe6f6-214b-4fed-95d8-9309c23239a5) and start prompting.
+### **💾 Never Lose Your Work**
+Inklify autosaves after a short pause, so everything you write is safely stored.
 
-Changes made via Lovable will be committed automatically to this repo.
+### **🖥️ Great on Large Screens**
+A desktop‑style layout shows your notes list, editor, and preview side‑by‑side.  
+Resize panels however you like.
 
-**Use your preferred IDE**
+<img alt="Resize panels" src="./readme/assets/Screenshot%202025-12-04%20at%2013.50.25.png">
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### **📱 Optimized for Mobile**
+On phones, the workspace switches to tabs:  
+**Notes → Edit → Preview** — with an AI button always easy to reach.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+<img alt="Inklify responsive" src="./readme/assets/Screenshot%202025-12-04%20at%2013.55.00.png">
 
-Follow these steps:
+### **🤖 AI That Helps You Write**
+Select text or press the AI button to:
+- Improve writing
+- Expand ideas
+- Summarize content
+- Generate from scratch
+  All powered by a Supabase Edge Function.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### **⭐️ Expand Your Ideas**
+<img alt="Expand text with AI" src="./readme/assets/Screenshot%202025-12-04%20at%2014.01.38.png">
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+<img alt="Expand text with AI" src="./readme/assets/Screenshot%202025-12-04%20at%2014.02.20.png">
 
-# Step 3: Install the necessary dependencies.
-npm i
+### **🛠️ Create with AI Assistance**
+<img alt="Create text with AI" src="./readme/assets/Screenshot%202025-12-04%20at%2014.05.05.png">
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+<img alt="Create text with AI" src="./readme/assets/Screenshot%202025-12-04%20at%2014.05.42.png">
+
+### **⬇️ Export Your Notes**
+Download any note as a `.md` file with a single click.
+
+---
+
+## 🧰 What’s Inside (High‑Level Overview)
+
+- **Frontend:** React + Vite + Tailwind for a fast and pleasant UI
+- **Storage:** Supabase for authentication and syncing your notes
+- **AI:** A Supabase Edge Function that sends prompts to the Lovable AI Gateway
+- **Responsive Layout:** Works smoothly on both widescreen desktops and phones
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install the project
+```bash
+git clone <repo>
+cd inklify
+npm install
 ```
 
-**Edit a file directly in GitHub**
+### 2. Add your environment variables
+Create a file named `.env`:
+```bash
+VITE_SUPABASE_URL=https://<your-project>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Make sure your Supabase project includes the database migration and the `ai-assist` Edge Function.
 
-**Use GitHub Codespaces**
+### 3. Run Inklify locally
+```bash
+npm run dev
+```
+Open the printed URL and sign up or sign in.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## 🧭 How to Use Inklify
 
-This project is built with:
+- **Create, search, and delete notes** from the sidebar
+- **Write using Markdown** in a clean editor
+- **See changes instantly** in the live preview
+- **Let AI help** when you need inspiration or editing
+- **Export** your final note as a Markdown file
+- **Use mobile mode** for a smooth, compact writing flow
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/fb4fe6f6-214b-4fed-95d8-9309c23239a5) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Enjoy writing with Inklify! ✍️

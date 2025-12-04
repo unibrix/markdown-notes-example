@@ -40,7 +40,7 @@ export const NotesList = ({
     <aside className="w-full border-r border-sidebar-border bg-sidebar flex flex-col h-screen">
       <header className="p-4 border-b border-sidebar-border">
         <h1 className="text-xl font-display font-bold text-sidebar-foreground mb-4">
-          Notes
+          Inklify
         </h1>
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
